@@ -2,51 +2,27 @@ import React, { useState } from 'react';
 
 const Grid = () => {
   const [addIndex, setAddIndex] = useState([]);
-  const [isDeactivating, setIsDeactivating] = useState(false);
   const grid = [
     [1, 1, 1],
     [1, 0, 1],
     [1, 1, 1],
   ];
 
-  // Function to handle adding an index and checking for the deactivation condition
   const addEvent = (index) => {
-    setAddIndex((prev) => {
-      if (!prev.includes(index)) {
-        const updatedAddIndex = [index, ...prev];
-
-        // Check if we need to deactivate
-        if (updatedAddIndex.length === grid.flat().filter(Boolean).length) {
-          setIsDeactivating(true);
-          subtractEvent().then(() => {
-            if (updatedAddIndex.length > 0) {
-              setAddIndex([]);
-            }
-          });
-        }
-        return updatedAddIndex;
-      }
-      return prev;
-    });
+    if (!addIndex.includes(index)) {
+      setAddIndex([index, ...addIndex]);
+    }
+    if (addIndex.length + 1 === grid.flat().filter(Boolean).length) {
+      subtractEvent();
+    }
   };
-  console.log(addIndex);
 
-  // Function to handle the subtraction event with timeouts
   const subtractEvent = () => {
-    const indicesToRemove = [...addIndex].reverse();
-    return new Promise((resolve) => {
-      indicesToRemove.forEach((index, i) => {
-        setTimeout(() => {
-          setAddIndex((prev) => {
-            const newOrder = prev.filter((idx) => idx !== index);
-            if (newOrder.length === 0) {
-              setIsDeactivating(false);
-              resolve(); // Resolve the promise once all indices are removed
-            }
-            return newOrder;
-          });
-        }, i * 1000);
-      });
+    const indicesToRemove = [...addIndex];
+    indicesToRemove.reverse().forEach((index, i) => {
+      setTimeout(() => {
+        setAddIndex((prev) => prev.filter((_, idx) => idx !== prev.length - 1));
+      }, i * 1000);
     });
   };
 
@@ -63,8 +39,8 @@ const Grid = () => {
               : cell === 1
               ? 'bg-red-700'
               : 'bg-white'
-          } m-auto ${isDeactivating ? 'opacity-50 cursor-not-allowed' : ''}`}
-          onClick={() => !isDeactivating && addEvent(index)}
+          } m-auto`}
+          onClick={() => addEvent(index)}
         ></div>
       ))}
     </div>

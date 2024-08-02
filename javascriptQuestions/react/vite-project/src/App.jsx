@@ -1,13 +1,9 @@
-import { useState } from 'react';
-import Para from './page/Para';
-import Grid from './page/grid/Grid';
+import InfiniteMainFile from './page/infiniteScroll/InfiniteMainFile';
 
 function App() {
   return (
     <>
-      <Para />
-
-      <Grid />
+      <InfiniteMainFile />
     </>
   );
 }
